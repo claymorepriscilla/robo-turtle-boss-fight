@@ -30,6 +30,7 @@ export default function App() {
   const [bossHealthPercent, setBossHealthPercent] = useState<number>(100);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
   const [highScore, setHighScore] = useState<number>(5000);
+  const [showMobileControls, setShowMobileControls] = useState<boolean>(false);
 
   // Dense reference mapping keeping all states for 60fps frame calculations perfectly isolated
   const gameRef = useRef<{
@@ -103,6 +104,15 @@ export default function App() {
     mushroomY: 0,
     mushroomVx: 0,
   });
+
+  // Touch/Virtual keyboard keys helper
+  const setVirtualKey = (key: string, isPressed: boolean) => {
+    const keys = gameRef.current.keys;
+    keys[key] = isPressed;
+    if (key === 'space') {
+      keys[' '] = isPressed;
+    }
+  };
 
   // Sound enablement toggle
   const toggleSound = () => {
@@ -179,6 +189,13 @@ export default function App() {
     const saved = localStorage.getItem('robo_turtle_highscore');
     if (saved) {
       setHighScore(parseInt(saved, 10));
+    }
+
+    // Auto-detect touch device or small screen on initial load
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const isSmallScreen = window.innerWidth < 1024;
+    if (isTouch || isSmallScreen) {
+      setShowMobileControls(true);
     }
   }, []);
 
@@ -2240,6 +2257,15 @@ export default function App() {
           </div>
           
           <button
+            id="btn-toggle-mobile-controls"
+            onClick={() => setShowMobileControls(prev => !prev)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-none border-2 border-black cursor-pointer text-[10px] uppercase font-mono shadow-[1.5px_1.5px_0_#000] active:translate-y-[1px] active:shadow-none ${showMobileControls ? 'bg-yellow-500 text-black hover:bg-yellow-400' : 'bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-700'}`}
+          >
+            <Gamepad2 className="w-3.5 h-3.5" />
+            {showMobileControls ? "Touch Controls: ON" : "Touch Controls: OFF"}
+          </button>
+          
+          <button
             id="btn-cabinet-restart"
             onClick={resetGame}
             className="flex items-center gap-1.5 bg-gray-800 text-gray-300 hover:text-white px-3 py-1.5 rounded-none border-2 border-black hover:bg-gray-700 cursor-pointer text-[10px] uppercase font-mono shadow-[1.5px_1.5px_0_#000] active:translate-y-[1px] active:shadow-none"
@@ -2248,6 +2274,72 @@ export default function App() {
             Reset Fight
           </button>
         </div>
+
+        {showMobileControls && (
+          <div className="w-full bg-[#0b0b0d] border-t-4 border-black p-4 flex justify-between items-center select-none touch-none py-5 px-6 sm:px-12 z-30">
+            
+            {/* Left: Direction D-pad */}
+            <div className="flex gap-3">
+              <button
+                onTouchStart={() => setVirtualKey('a', true)}
+                onTouchEnd={() => setVirtualKey('a', false)}
+                onMouseDown={() => setVirtualKey('a', true)}
+                onMouseUp={() => setVirtualKey('a', false)}
+                onMouseLeave={() => setVirtualKey('a', false)}
+                className="w-14 h-14 bg-gray-900 border-4 border-yellow-500 active:bg-yellow-500 active:text-black text-yellow-500 font-black text-xl flex items-center justify-center cursor-pointer shadow-[2px_2px_0_#000] active:translate-y-0.5 active:shadow-none select-none touch-manipulation"
+              >
+                ◀
+              </button>
+              
+              <button
+                onTouchStart={() => setVirtualKey('d', true)}
+                onTouchEnd={() => setVirtualKey('d', false)}
+                onMouseDown={() => setVirtualKey('d', true)}
+                onMouseUp={() => setVirtualKey('d', false)}
+                onMouseLeave={() => setVirtualKey('d', false)}
+                className="w-14 h-14 bg-gray-900 border-4 border-yellow-500 active:bg-yellow-500 active:text-black text-yellow-500 font-black text-xl flex items-center justify-center cursor-pointer shadow-[2px_2px_0_#000] active:translate-y-0.5 active:shadow-none select-none touch-manipulation"
+              >
+                ▶
+              </button>
+            </div>
+
+            {/* Middle: Help label or state context */}
+            <div className="hidden sm:flex flex-col items-center justify-center text-[8px] text-gray-500 font-mono tracking-widest leading-none">
+              <span>MOBILE TOUCH</span>
+              <span className="text-yellow-500 font-bold mt-1">CONTROLLER</span>
+            </div>
+
+            {/* Right: Actions */}
+            <div className="flex gap-4">
+              {/* Shoot Button */}
+              <button
+                onTouchStart={() => setVirtualKey('j', true)}
+                onTouchEnd={() => setVirtualKey('j', false)}
+                onMouseDown={() => setVirtualKey('j', true)}
+                onMouseUp={() => setVirtualKey('j', false)}
+                onMouseLeave={() => setVirtualKey('j', false)}
+                className="w-14 h-14 bg-yellow-500 border-4 border-black active:bg-yellow-400 text-black font-black text-xs flex flex-col items-center justify-center cursor-pointer shadow-[2px_2px_0_#000] active:translate-y-0.5 active:shadow-none select-none rounded-full touch-manipulation"
+              >
+                <span className="text-sm">🔥</span>
+                <span className="text-[7px] font-mono tracking-tighter leading-none mt-0.5">SHOOT</span>
+              </button>
+              
+              {/* Jump Button */}
+              <button
+                onTouchStart={() => setVirtualKey('space', true)}
+                onTouchEnd={() => setVirtualKey('space', false)}
+                onMouseDown={() => setVirtualKey('space', true)}
+                onMouseUp={() => setVirtualKey('space', false)}
+                onMouseLeave={() => setVirtualKey('space', false)}
+                className="w-14 h-14 bg-red-655 border-4 border-black active:bg-red-500 text-white font-black text-xs flex flex-col items-center justify-center cursor-pointer shadow-[2px_2px_0_#000] active:translate-y-0.5 active:shadow-none select-none rounded-full touch-manipulation"
+              >
+                <span className="text-sm">🦘</span>
+                <span className="text-[7px] font-mono tracking-tighter leading-none mt-0.5">JUMP</span>
+              </button>
+            </div>
+
+          </div>
+        )}
  
         {/* Outer decorative bezel bottom speaker grill */}
         <div className="bg-[#050505] p-3 flex justify-center items-center border-t-2 border-black">
