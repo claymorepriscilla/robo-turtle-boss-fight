@@ -1,0 +1,6 @@
+{
+  "name": "Robo-Turtle Boss Fight",
+  "description": "A highly detailed 16-bit action-arcade retro game featuring Humeman Soldier in a spectacular boss battle against the giant cybernetic Robo-Turtle.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
