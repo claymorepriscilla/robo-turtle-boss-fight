@@ -54,6 +54,13 @@ One of the most unique aspects of the game is its **RetroAudioEngine** (`src/aud
 - **Restart Game**: `R` (on Game Over / Victory screen)
 - **Select / Fast Start**: `Enter` (on Start screen)
 
+### Mobile Touch Layout
+- **Move Left / Right**: Virtual `◀` and `▶` arrow buttons.
+- **Jump**: Virtual `🦘 JUMP` button.
+- **Fire Blaster**: Virtual `🔥 SHOOT` button.
+- **Panel Visibility**: Toggle display using the **Touch Controls: ON/OFF (🎮)** button located in the lower cabinet control panel.
+- **Auto-Detection**: The touch panel automatically opens when a touch device or screen width under `1024px` is detected.
+
 ### Core Physics & Mechanics
 - **Weapon Recoil & Fire Rate**: Firing your blaster kicks you backward slightly and triggers a muzzle flash. The blaster has a short 12-frame cooldown.
 - **Critical Hits**: Landing a shot directly on the Robo-Turtle’s **reactor core / glowing eye** (the front face region) deals **5 damage (Critical Yellow)** instead of the standard **3 damage (Standard Red)**.
@@ -115,7 +122,24 @@ The giant cybernetic Robo-Turtle operates using a sophisticated AI behavior tree
    ```bash
    npm run dev
    ```
-   Open your browser and navigate to `http://localhost:3000` to start playing!
+    Open your browser and navigate to `http://localhost:3000` to start playing!
+
+---
+
+## 🌐 Production Deployment (Railway)
+
+This repository is fully containerized and pre-configured for production hosting on platforms like **Railway** using the included `Dockerfile` and Express production web server (`server.js`).
+
+### Deploying to Railway via GitHub
+
+1. Log in to [Railway.app](https://railway.app/).
+2. Click **New Project** $\rightarrow$ **Deploy from GitHub repo**.
+3. Select your repository `robo-turtle-boss-fight`.
+4. Go to the **Variables** tab in your Railway service dashboard and add your environment variables:
+   - `GEMINI_API_KEY`: Add your official Gemini API Key.
+   - `PORT`: By default, the application runs on port `3000`.
+5. Railway will automatically find the `Dockerfile`, build your React/Vite assets, spin up the Express server, and deploy your game!
+6. Click **Generate Domain** in the **Settings** tab to access your public URL.
 
 ---
 
