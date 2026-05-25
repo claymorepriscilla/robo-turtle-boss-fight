@@ -72,6 +72,55 @@ One of the most unique aspects of the game is its **RetroAudioEngine** (`src/aud
 
 ---
 
+## 📊 Game Lifecycle & Architecture Flow
+
+### 1. Game State Lifecycle
+This diagram illustrates the lifecycle of the game's states from start to end, including retry loops:
+
+```mermaid
+flowchart TD
+    Start["👾 START Screen"] -->|"Play Button / Enter Key"| Play["🎮 PLAY State (Active Battle)"]
+    Play -->|"Player Health = 0"| GameOver["💀 GAMEOVER Screen"]
+    Play -->|"Robo-Turtle Health = 0"| Victory["🏆 VICTORY Screen"]
+    
+    GameOver -->|"Retry Button / R Key"| Reset1["🔄 Reset Arena & Stats"] --> Play
+    Victory -->|"Play Again Button / R Key"| Reset2["🔄 Reset Arena & Stats"] --> Play
+```
+
+### 2. Core Game Loop & Input Integration
+The custom HTML5 Canvas engine is driven by a `requestAnimationFrame` loop synced at 60 FPS, taking input updates in real-time:
+
+```mermaid
+flowchart LR
+    subgraph Inputs ["🕹️ Inputs & Controls"]
+        KB["⌨️ Keyboard Event Listeners"]
+        Touch["📱 Touch Panel Controls"]
+    end
+    
+    subgraph Engine ["⚙️ Game Engine (60 FPS Loop)"]
+        RAF["requestAnimationFrame"] --> Physics["🏃 Update Physics"]
+        Physics --> Collisions["💥 Collision Detection"]
+        Collisions --> Rendering["🎨 Render Frames on Canvas"]
+        Rendering --> RAF
+    end
+    
+    Inputs -->|"Update keys state map"| Physics
+```
+
+### 3. Git-to-Railway Deployment Pipeline
+Our multi-stage containerized build pipeline is automated via GitHub integration:
+
+```mermaid
+flowchart TD
+    Dev["💻 Local Dev Commit"] -->|"git push origin main"| Git["🐙 GitHub Remote Repo"]
+    Git -->|"Trigger Webhook"| Railway["🚂 Railway Cloud Platform"]
+    Railway -->|"Multi-stage Dockerfile"| Build["🛠️ Build Vite Static Assets"]
+    Build -->|"Express Setup"| Dist["📦 Serve static files via Express (Port 3000)"]
+    Dist -->|"Networking"| Web["🌐 Deployed URL (Generated Domain)"]
+```
+
+---
+
 ## 🐢 Boss AI Phases & State Machine
 
 The giant cybernetic Robo-Turtle operates using a sophisticated AI behavior tree and health-based phase transitions:
